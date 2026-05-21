@@ -52,60 +52,7 @@
     <build>
         <finalName>MoodTownSuite</finalName>
 
-        <sourceDirectory>${project.basedir}/MoodTownGrade-main/src/main/java</sourceDirectory>
-
-        <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>${project.basedir}/MoodTownGrade-main/src/main/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>plugin.yml</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>${project.basedir}/Moodtownmenu-main/src/main/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>plugin.yml</exclude>
-                    <exclude>config.yml</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>${project.basedir}/MoodVilleDrapeau-main/src/main/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>plugin.yml</exclude>
-                    <exclude>config.yml</exclude>
-                </excludes>
-            </resource>
-        </resources>
-
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <id>add-extra-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.basedir}/Moodtownmenu-main/src/main/java</source>
-                                <source>${project.basedir}/MoodVilleDrapeau-main/src/main/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
