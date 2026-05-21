@@ -1,8 +1,8 @@
 package fr.moodcraft.flag.storage;
 
-import fr.moodcraft.flag.Main;
 import fr.moodcraft.flag.manager.FlagManager;
 import fr.moodcraft.flag.model.TownFlag;
+import fr.moodcraft.tgrade.Main;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +25,7 @@ public class FlagStorage {
         if (!file.exists()) {
 
             try {
-
+                file.getParentFile().mkdirs();
                 file.createNewFile();
 
             } catch (IOException e) {
@@ -38,10 +38,6 @@ public class FlagStorage {
                 YamlConfiguration.loadConfiguration(
                         file
                 );
-
-        //
-        // 🏛 TOWNS
-        //
 
         if (config.contains("towns")) {
 
@@ -70,10 +66,6 @@ public class FlagStorage {
                 );
             }
         }
-
-        //
-        // 🌍 NATIONS
-        //
 
         if (config.contains("nations")) {
 
@@ -106,9 +98,7 @@ public class FlagStorage {
 
     public static void save() {
 
-        //
-        // 🏛 TOWNS
-        //
+        if (config == null || file == null) return;
 
         for (String town :
                 FlagManager.allTowns()
@@ -130,10 +120,6 @@ public class FlagStorage {
                     flag.getBanner()
             );
         }
-
-        //
-        // 🌍 NATIONS
-        //
 
         for (String nation :
                 FlagManager.allNations()
