@@ -50,7 +50,7 @@ public class TownInputListener
                     .runTask(
                             Bukkit.getPluginManager()
                                     .getPlugin(
-                                            "MoodTownMenu"
+                                            "MoodTownSuite"
                                     ),
 
                             () -> {
@@ -74,7 +74,7 @@ public class TownInputListener
                 .runTask(
                         Bukkit.getPluginManager()
                                 .getPlugin(
-                                        "MoodTownMenu"
+                                        "MoodTownSuite"
                                 ),
 
                         () -> execute(
