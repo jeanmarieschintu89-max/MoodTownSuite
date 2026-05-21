@@ -1,5 +1,9 @@
 package fr.moodcraft.tgrade;
 
+import fr.moodcraft.flag.command.DrapeauCommand;
+import fr.moodcraft.flag.listener.FlagGUIListener;
+import fr.moodcraft.flag.storage.FlagStorage;
+
 import fr.moodcraft.tgrade.command.UrbanismeAdminCommand;
 import fr.moodcraft.tgrade.command.UrbanismeCommand;
 import fr.moodcraft.tgrade.command.VProjetsResetCommand;
@@ -27,8 +31,11 @@ import fr.moodcraft.tgrade.storage.VoteStorage;
 
 import fr.moodcraft.tgrade.task.WeeklyResetTask;
 
-import org.bukkit.Bukkit;
+import fr.moodcraft.townmenu.command.TownMenuCommand;
+import fr.moodcraft.townmenu.listener.TownInputListener;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -48,7 +55,7 @@ public class Main extends JavaPlugin {
 
         if (Bukkit.getPluginManager().getPlugin("Towny") == null) {
             getLogger().severe("");
-            getLogger().severe("----- MoodTownGrade -----");
+            getLogger().severe("----- MoodTownSuite -----");
             getLogger().severe("Towny introuvable.");
             getLogger().severe("Plugin désactivé.");
             getLogger().severe("-------------------------");
@@ -58,50 +65,63 @@ public class Main extends JavaPlugin {
             return;
         }
 
+        // =========================
+        // 🏛 MoodTownGrade
+        // =========================
         SubmissionStorage.init();
         GradeStorage.init();
         VoteStorage.init();
-
         GradeManager.loadAll();
 
         UrbanismeCommand urbanismeCommand = new UrbanismeCommand();
-
         registerCommand("urbanisme", urbanismeCommand);
         registerCommand("topville", urbanismeCommand);
         registerCommand("vprojetsreset", new VProjetsResetCommand());
         registerCommand("urbanismeadmin", new UrbanismeAdminCommand());
 
-        getServer().getPluginManager().registerEvents(new GUIListener(), this);
-        getServer().getPluginManager().registerEvents(new RateGUIListener(), this);
-        getServer().getPluginManager().registerEvents(new ReviewGUIListener(), this);
-        getServer().getPluginManager().registerEvents(new UrbanismeMainListener(), this);
-        getServer().getPluginManager().registerEvents(new UrbanismeAdminListener(), this);
-        getServer().getPluginManager().registerEvents(new EvaluationManagerListener(), this);
-        getServer().getPluginManager().registerEvents(new PendingProjectsListener(), this);
-        getServer().getPluginManager().registerEvents(new ProjectReviewListener(), this);
-        getServer().getPluginManager().registerEvents(new ClassementListener(), this);
-        getServer().getPluginManager().registerEvents(new CitizenVoteListener(), this);
-        getServer().getPluginManager().registerEvents(new CitizenTownListListener(), this);
-        getServer().getPluginManager().registerEvents(new MayorVoteListener(), this);
-        getServer().getPluginManager().registerEvents(new MayorTownListListener(), this);
-        getServer().getPluginManager().registerEvents(new ProjectDepositChatListener(), this);
+        registerEvents(
+                new GUIListener(),
+                new RateGUIListener(),
+                new ReviewGUIListener(),
+                new UrbanismeMainListener(),
+                new UrbanismeAdminListener(),
+                new EvaluationManagerListener(),
+                new PendingProjectsListener(),
+                new ProjectReviewListener(),
+                new ClassementListener(),
+                new CitizenVoteListener(),
+                new CitizenTownListListener(),
+                new MayorVoteListener(),
+                new MayorTownListListener(),
+                new ProjectDepositChatListener()
+        );
 
         long week = 20L * 60L * 60L * 24L * 7L;
-
         Bukkit.getScheduler().runTaskTimer(this, new WeeklyResetTask(), week, week);
 
+        // =========================
+        // 🏙 MoodTownMenu
+        // =========================
+        registerCommand("menuville", new TownMenuCommand());
+        registerEvents(
+                new fr.moodcraft.townmenu.listener.GUIListener(),
+                new TownInputListener()
+        );
+
+        // =========================
+        // 🚩 MoodTownFlag / Drapeaux
+        // =========================
+        FlagStorage.load();
+        registerCommand("drapeau", new DrapeauCommand());
+        registerEvents(new FlagGUIListener());
+
         getLogger().info("");
-        getLogger().info("----- MoodTownGrade -----");
+        getLogger().info("----- MoodTownSuite -----");
         getLogger().info("Commission urbaine chargée.");
-        getLogger().info("Centre national opérationnel.");
-        getLogger().info("Votes citoyens actifs.");
-        getLogger().info("Conseil des maires actif.");
-        getLogger().info("Classement national actif.");
-        getLogger().info("Commande vprojetsreset active.");
-        getLogger().info("Commande urbanismeadmin active.");
-        getLogger().info("Système de dépôt immersif actif.");
-        getLogger().info("Grades chargés: " + GradeManager.getAll().size());
+        getLogger().info("Menu ville chargé.");
+        getLogger().info("Drapeaux ville/nation chargés.");
         getLogger().info("Towny détecté.");
+        getLogger().info("Grades chargés: " + GradeManager.getAll().size());
         getLogger().info("Reset hebdomadaire actif.");
         getLogger().info("-------------------------");
         getLogger().info("");
@@ -112,13 +132,20 @@ public class Main extends JavaPlugin {
 
         GradeManager.getAll().forEach(GradeManager::save);
         GradeManager.clearCache();
+        FlagStorage.save();
 
         getLogger().info("");
-        getLogger().info("----- MoodTownGrade -----");
+        getLogger().info("----- MoodTownSuite -----");
         getLogger().info("Plugin arrêté.");
         getLogger().info("Sauvegarde terminée.");
         getLogger().info("-------------------------");
         getLogger().info("");
+    }
+
+    private void registerEvents(Listener... listeners) {
+        for (Listener listener : listeners) {
+            getServer().getPluginManager().registerEvents(listener, this);
+        }
     }
 
     private void registerCommand(
