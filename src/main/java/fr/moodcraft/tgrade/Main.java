@@ -4,6 +4,10 @@ import fr.moodcraft.flag.command.DrapeauCommand;
 import fr.moodcraft.flag.listener.FlagGUIListener;
 import fr.moodcraft.flag.storage.FlagStorage;
 
+import fr.moodcraft.pubville.command.PubVilleCommand;
+import fr.moodcraft.pubville.listener.PubVilleListener;
+import fr.moodcraft.pubville.manager.PubVilleManager;
+
 import fr.moodcraft.tgrade.command.UrbanismeAdminCommand;
 import fr.moodcraft.tgrade.command.UrbanismeCommand;
 import fr.moodcraft.tgrade.command.VProjetsResetCommand;
@@ -109,6 +113,13 @@ public class Main extends JavaPlugin {
         );
 
         // =========================
+        // 📢 MoodPubVille
+        // =========================
+        PubVilleManager.init();
+        registerCommand("pubville", new PubVilleCommand());
+        registerEvents(new PubVilleListener());
+
+        // =========================
         // 🚩 MoodTownFlag / Drapeaux
         // =========================
         FlagStorage.load();
@@ -119,6 +130,7 @@ public class Main extends JavaPlugin {
         getLogger().info("----- MoodTownSuite -----");
         getLogger().info("Commission urbaine chargée.");
         getLogger().info("Menu ville chargé.");
+        getLogger().info("Publicités de ville chargées.");
         getLogger().info("Drapeaux ville/nation chargés.");
         getLogger().info("Towny détecté.");
         getLogger().info("Grades chargés: " + GradeManager.getAll().size());
@@ -133,6 +145,7 @@ public class Main extends JavaPlugin {
         GradeManager.getAll().forEach(GradeManager::save);
         GradeManager.clearCache();
         FlagStorage.save();
+        PubVilleManager.save();
 
         getLogger().info("");
         getLogger().info("----- MoodTownSuite -----");
