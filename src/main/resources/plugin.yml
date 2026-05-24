@@ -54,6 +54,15 @@ commands:
       - townmenu
       - tm
 
+  pubville:
+    description: Publicités de villes MoodCraft
+    usage: /pubville
+    aliases:
+      - publiciteville
+      - pubvilles
+      - villesponsorisee
+      - villesponsorisees
+
   drapeau:
     description: Menu drapeau des villes et nations MoodCraft
     usage: /drapeau
@@ -70,3 +79,12 @@ permissions:
 
   moodtownflag.admin:
     default: op
+
+  moodtownsuite.pubville.admin:
+    default: op
+
+  moodtownsuite.pubville.acheter:
+    default: true
+
+  moodtownsuite.pubville.liste:
+    default: true
