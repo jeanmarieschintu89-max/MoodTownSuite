@@ -85,6 +85,18 @@ public class TownMenuGUI {
                         "§e➜ §fVoir les étapes"
                 )
         );
+
+        SafeGUI.safeSet(inv, 31,
+                SafeGUI.item(
+                        Material.EMERALD,
+                        MoodStyle.button("Villes sponsorisées"),
+                        "§8• §7Découvrir les villes mises en avant",
+                        "§8• §7par les campagnes publicitaires",
+                        "§8• §7Idéal pour visiter sans commande",
+                        "",
+                        "§e➜ §fOuvrir les publicités"
+                )
+        );
     }
 
     private static void openTownMember(Player player, Inventory inv, Town town) {
@@ -156,6 +168,18 @@ public class TownMenuGUI {
         );
 
         SafeGUI.safeSet(inv, 25, createTownFlagItem(town));
+
+        SafeGUI.safeSet(inv, 34,
+                SafeGUI.item(
+                        Material.EMERALD,
+                        MoodStyle.button("Publicité ville"),
+                        "§8• §7Voir les villes sponsorisées",
+                        "§8• §7ou mettre votre ville en avant",
+                        "§8• §7depuis la banque municipale",
+                        "",
+                        "§e➜ §fOuvrir PubVille"
+                )
+        );
 
         if (TownyUtil.canManageTown(player)) {
 
