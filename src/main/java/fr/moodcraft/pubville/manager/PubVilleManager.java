@@ -84,6 +84,10 @@ public final class PubVilleManager {
     public static BuyResult buy(Player player, String level) {
         cleanupExpired();
 
+        if (!Main.get().getConfig().getBoolean("publicite-ville.actif", true)) {
+            return BuyResult.fail("§cLes publicités de ville sont désactivées.");
+        }
+
         Town town = TownyAPI.getInstance().getTown(player);
 
         if (town == null) {
@@ -98,6 +102,12 @@ public final class PubVilleManager {
 
         if (campaigns.containsKey(key(townName))) {
             return BuyResult.fail("§cVotre ville possède déjà une publicité active.");
+        }
+
+        int max = Main.get().getConfig().getInt("publicite-ville.campagnes-max-actives", 18);
+
+        if (getActiveCampaigns().size() >= max) {
+            return BuyResult.fail("§cLa limite de publicités actives est atteinte.");
         }
 
         double price = price(level);
@@ -151,15 +161,25 @@ public final class PubVilleManager {
             return;
         }
 
+        int delay = Math.max(0, Main.get().getConfig().getInt("publicite-ville.delai-teleportation-secondes", 3));
+
         player.closeInventory();
-        player.sendMessage("§eTéléportation vers §b" + campaign.getTownName() + "§e dans 3 secondes...");
+
+        if (delay <= 0) {
+            player.teleport(location);
+            player.sendMessage("§aBienvenue à §b" + campaign.getTownName() + "§a.");
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.8f, 1.1f);
+            return;
+        }
+
+        player.sendMessage("§eTéléportation vers §b" + campaign.getTownName() + "§e dans " + delay + " secondes...");
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 0.8f, 1.2f);
 
         Bukkit.getScheduler().runTaskLater(Main.get(), () -> {
             player.teleport(location);
             player.sendMessage("§aBienvenue à §b" + campaign.getTownName() + "§a.");
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.8f, 1.1f);
-        }, 20L * 3L);
+        }, 20L * delay);
     }
 
     public static void cleanupExpired() {
