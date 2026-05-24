@@ -1,2 +1,19 @@
 # MoodTownSuite Config
 # Fusion de MoodTownGrade, MoodTownMenu et MoodTownFlag.
+
+publicite-ville:
+  actif: true
+  nom-pnj: "&eVilles sponsorisées"
+  utiliser-banque-ville: true
+  campagnes-max-actives: 18
+  delai-teleportation-secondes: 3
+  durees-campagnes:
+    petite:
+      prix: 5000
+      duree-heures: 24
+    moyenne:
+      prix: 15000
+      duree-heures: 72
+    grande:
+      prix: 40000
+      duree-heures: 168

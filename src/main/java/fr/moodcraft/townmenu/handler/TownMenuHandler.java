@@ -1,5 +1,6 @@
 package fr.moodcraft.townmenu.handler;
 
+import fr.moodcraft.pubville.gui.PubVilleGUI;
 import fr.moodcraft.townmenu.gui.TownBankGUI;
 import fr.moodcraft.townmenu.gui.TownClaimsGUI;
 import fr.moodcraft.townmenu.gui.TownMayorGUI;
@@ -93,6 +94,11 @@ public class TownMenuHandler {
                 TownSettingsGUI.open(p);
             }
 
+            case 34 -> {
+                SoundUtil.click(p);
+                PubVilleGUI.open(p);
+            }
+
             case 49 -> {
                 SoundUtil.back(p);
                 p.closeInventory();
@@ -132,6 +138,11 @@ public class TownMenuHandler {
                         MoodStyle.detail("Commande : §e/t create <nom>"),
                         MoodStyle.detail("Tu peux aussi rejoindre Utopia pour débuter.")
                 );
+            }
+
+            case 31 -> {
+                SoundUtil.click(p);
+                PubVilleGUI.open(p);
             }
 
             case 49 -> {
