@@ -6,6 +6,7 @@ import com.palmergames.bukkit.towny.object.Town;
 import fr.moodcraft.pubville.gui.PubVilleGUI;
 import fr.moodcraft.pubville.manager.PubVilleManager;
 import fr.moodcraft.pubville.model.PubVilleCampaign;
+import fr.moodcraft.tgrade.Main;
 import fr.moodcraft.tgrade.towny.TownyHook;
 import fr.moodcraft.townmenu.util.MoodStyle;
 import fr.moodcraft.townmenu.util.SoundUtil;
@@ -176,8 +177,8 @@ public class PubVilleCommand implements CommandExecutor {
         }
 
         if (args[1].equalsIgnoreCase("recharger")) {
+            Main.get().reloadConfig();
             PubVilleManager.reload();
-            player.getServer().getPluginManager().getPlugin("MoodTownSuite").reloadConfig();
             MoodStyle.send(player, "PubVille", "§aConfiguration et publicités rechargées.");
             SoundUtil.success(player);
             return;
