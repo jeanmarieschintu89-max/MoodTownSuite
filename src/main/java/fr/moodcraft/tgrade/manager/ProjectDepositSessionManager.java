@@ -1,12 +1,18 @@
 package fr.moodcraft.tgrade.manager;
 
+import fr.moodcraft.tgrade.Main;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class ProjectDepositSessionManager {
+
+    private static final long TIMEOUT_TICKS = 20L * 60L;
 
     public enum Step {
         NAME,
@@ -56,11 +62,48 @@ public class ProjectDepositSessionManager {
     private static final Map<UUID, Session> sessions =
             new HashMap<>();
 
+    private static final Map<UUID, BukkitTask> timeouts =
+            new HashMap<>();
+
     public static void start(Player p, String town) {
 
+        remove(p);
+
+        UUID uuid =
+                p.getUniqueId();
+
         sessions.put(
-                p.getUniqueId(),
+                uuid,
                 new Session(town)
+        );
+
+        BukkitTask task =
+                Bukkit.getScheduler().runTaskLater(
+                        Main.get(),
+                        () -> {
+
+                            if (!sessions.containsKey(uuid)) {
+                                return;
+                            }
+
+                            sessions.remove(uuid);
+                            timeouts.remove(uuid);
+
+                            if (p.isOnline()) {
+                                p.sendMessage("");
+                                p.sendMessage("§8----- §6Commission Urbaine §8-----");
+                                p.sendMessage("§c⏳ Temps écoulé.");
+                                p.sendMessage("§7Le dépôt de projet a été annulé automatiquement.");
+                                p.sendMessage("§8-----------------------------");
+                                p.sendMessage("");
+                            }
+                        },
+                        TIMEOUT_TICKS
+                );
+
+        timeouts.put(
+                uuid,
+                task
         );
 
         p.sendMessage("");
@@ -88,8 +131,16 @@ public class ProjectDepositSessionManager {
 
     public static void remove(Player p) {
 
-        sessions.remove(
-                p.getUniqueId()
-        );
+        UUID uuid =
+                p.getUniqueId();
+
+        sessions.remove(uuid);
+
+        BukkitTask task =
+                timeouts.remove(uuid);
+
+        if (task != null) {
+            task.cancel();
+        }
     }
 }
