@@ -54,6 +54,16 @@ commands:
       - townmenu
       - tm
 
+  donville:
+    description: Boîtes à dons des villes MoodCraft
+    usage: /donville
+    aliases:
+      - don
+      - dons
+      - boitedons
+      - boitedon
+      - dons-ville
+
   drapeau:
     description: Menu drapeau des villes et nations MoodCraft
     usage: /drapeau
@@ -69,4 +79,13 @@ permissions:
     default: op
 
   moodtownflag.admin:
+    default: op
+
+  moodtownsuite.donville.creer:
+    default: true
+
+  moodtownsuite.donville.donner:
+    default: true
+
+  moodtownsuite.donville.admin:
     default: op
