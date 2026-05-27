@@ -42,19 +42,26 @@ public final class DonVilleManager {
 
     public static void createBox(Town town) {
         ensureLoaded();
-        enabledTowns.add(key(town.getName()));
-        DonVilleStorage.setEnabled(town.getName(), true);
+
+        String townName = safeTownName(town);
+
+        enabledTowns.add(key(townName));
+        DonVilleStorage.setEnabled(townName, true);
     }
 
     public static boolean removeBox(Town town) {
         ensureLoaded();
-        boolean removed = enabledTowns.remove(key(town.getName()));
-        DonVilleStorage.setEnabled(town.getName(), false);
+
+        String townName = safeTownName(town);
+        boolean removed = enabledTowns.remove(key(townName));
+
+        DonVilleStorage.setEnabled(townName, false);
         return removed;
     }
 
     public static List<Town> getEnabledTowns() {
         ensureLoaded();
+
         List<Town> towns = new ArrayList<>();
 
         for (String townName : enabledTowns) {
@@ -65,7 +72,7 @@ public final class DonVilleManager {
             }
         }
 
-        towns.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+        towns.sort((a, b) -> safeTownName(a).compareToIgnoreCase(safeTownName(b)));
         return towns;
     }
 
@@ -86,7 +93,9 @@ public final class DonVilleManager {
             return DonateResult.fail("§cVille introuvable : §e" + townName);
         }
 
-        if (!isEnabled(town.getName())) {
+        String realTownName = safeTownName(town);
+
+        if (!isEnabled(realTownName)) {
             return DonateResult.fail("§cCette ville n'a pas encore de boîte à dons active.");
         }
 
@@ -114,7 +123,7 @@ public final class DonVilleManager {
                 return DonateResult.fail("§cVous n'avez pas assez d'argent. Don : §e" + format(amount) + "€");
             }
 
-            boolean withdrawn = resident.getAccount().withdraw(amount, "Don à la ville " + town.getName());
+            boolean withdrawn = resident.getAccount().withdraw(amount, "Don à la ville " + realTownName);
 
             if (!withdrawn) {
                 return DonateResult.fail("§cImpossible de débiter votre compte.");
@@ -133,16 +142,28 @@ public final class DonVilleManager {
 
         int maxHistory = Main.get().getConfig().getInt("boite-dons-ville.historique-max", 20);
         DonVilleStorage.addDonation(
-                town.getName(),
+                realTownName,
                 new DonVilleDonation(player.getName(), amount, System.currentTimeMillis()),
                 maxHistory
         );
 
-        return DonateResult.success("§aMerci ! Vous avez donné §e" + format(amount) + "€ §aà §b" + town.getName() + "§a.");
+        return DonateResult.success("§aMerci ! Vous avez donné §e" + format(amount) + "€ §aà §b" + realTownName + "§a.");
     }
 
     public static String format(double value) {
         return MONEY.format(value).replace(",", " ");
+    }
+
+    public static String safeTownName(Town town) {
+        if (town == null) {
+            return "Inconnue";
+        }
+
+        try {
+            return town.getName();
+        } catch (Exception e) {
+            return "Inconnue";
+        }
     }
 
     private static void ensureLoaded() {
