@@ -64,7 +64,6 @@ public class DonVilleCommand implements CommandExecutor {
             return true;
         }
 
-        // Format très simple : /don <ville> <montant>
         if (args.length >= 2) {
             donateDirect(player, args[0], args[1]);
             return true;
@@ -89,14 +88,21 @@ public class DonVilleCommand implements CommandExecutor {
             return;
         }
 
-        if (DonVilleManager.isEnabled(town.getName())) {
+        String townName = DonVilleManager.safeTownName(town);
+
+        if (DonVilleManager.isEnabled(townName)) {
             MoodStyle.send(player, "DonVille", "§cVotre ville possède déjà une boîte à dons.");
             SoundUtil.fail(player);
             return;
         }
 
         DonVilleManager.createBox(town);
-        MoodStyle.send(player, "DonVille", "§aBoîte à dons créée pour §b" + town.getName() + "§a.", "§7Les joueurs peuvent donner avec §e/don " + town.getName() + " <montant>§7.");
+        MoodStyle.send(
+                player,
+                "DonVille",
+                "§aBoîte à dons créée pour §b" + townName + "§a.",
+                "§7Les joueurs peuvent donner avec §e/don " + townName + " <montant>§7."
+        );
         SoundUtil.success(player);
     }
 
@@ -115,8 +121,10 @@ public class DonVilleCommand implements CommandExecutor {
             return;
         }
 
+        String townName = DonVilleManager.safeTownName(town);
+
         if (DonVilleManager.removeBox(town)) {
-            MoodStyle.send(player, "DonVille", "§aBoîte à dons supprimée pour §b" + town.getName() + "§a.");
+            MoodStyle.send(player, "DonVille", "§aBoîte à dons supprimée pour §b" + townName + "§a.");
             SoundUtil.success(player);
         } else {
             MoodStyle.send(player, "DonVille", "§cVotre ville n'avait pas de boîte à dons active.");
@@ -170,15 +178,16 @@ public class DonVilleCommand implements CommandExecutor {
             return;
         }
 
-        List<DonVilleDonation> history = DonVilleManager.getHistory(town.getName());
+        String townName = DonVilleManager.safeTownName(town);
+        List<DonVilleDonation> history = DonVilleManager.getHistory(townName);
 
         if (history.isEmpty()) {
-            MoodStyle.send(player, "DonVille", "§7Aucun don enregistré pour §b" + town.getName() + "§7.");
+            MoodStyle.send(player, "DonVille", "§7Aucun don enregistré pour §b" + townName + "§7.");
             return;
         }
 
         String[] lines = new String[Math.min(history.size(), 6) + 1];
-        lines[0] = "§7Derniers dons pour §b" + town.getName();
+        lines[0] = "§7Derniers dons pour §b" + townName;
 
         int index = 1;
         for (DonVilleDonation donation : history) {
@@ -210,7 +219,8 @@ public class DonVilleCommand implements CommandExecutor {
                 break;
             }
 
-            lines[index] = "§b" + town.getName() + " §8- §e/don " + town.getName() + " <montant>";
+            String townName = DonVilleManager.safeTownName(town);
+            lines[index] = "§b" + townName + " §8- §e/don " + townName + " <montant>";
             index++;
         }
 
