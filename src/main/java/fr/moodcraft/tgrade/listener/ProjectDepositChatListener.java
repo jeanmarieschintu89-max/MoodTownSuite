@@ -47,7 +47,7 @@ public class ProjectDepositChatListener
 
         Bukkit.getScheduler().runTask(
                 Bukkit.getPluginManager()
-                        .getPlugin("MoodTownGrade"),
+                        .getPlugin("MoodTownSuite"),
                 () -> handle(p, message)
         );
     }
