@@ -1,2 +1,10 @@
 # MoodTownSuite Config
 # Fusion de MoodTownGrade, MoodTownMenu et MoodTownFlag.
+
+boite-dons-ville:
+  actif: true
+  montant-minimum: 10
+  montant-maximum: 100000
+  historique-max: 20
+  autoriser-visiteurs: true
+  utiliser-banque-ville: true
