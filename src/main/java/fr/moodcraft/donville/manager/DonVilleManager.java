@@ -29,15 +29,68 @@ public final class DonVilleManager {
 
     public static void reload() {
         enabledTowns = DonVilleStorage.loadEnabledTowns();
+
+        if (isAutoCreationEnabled()) {
+            createMissingBoxesForAllTowns();
+        }
     }
 
     public static void save() {
         DonVilleStorage.save();
     }
 
+    public static boolean isAutoCreationEnabled() {
+        return Main.get().getConfig().getBoolean("boite-dons-ville.creation-automatique", true);
+    }
+
+    public static int createMissingBoxesForAllTowns() {
+        ensureLoaded();
+
+        int created = 0;
+
+        try {
+            for (Town town : TownyAPI.getInstance().getTowns()) {
+                String townName = safeTownName(town);
+                String townKey = key(townName);
+
+                if (townKey.isEmpty() || enabledTowns.contains(townKey)) {
+                    continue;
+                }
+
+                enabledTowns.add(townKey);
+                DonVilleStorage.setEnabled(townName, true);
+                created++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return created;
+    }
+
     public static boolean isEnabled(String townName) {
         ensureLoaded();
-        return enabledTowns.contains(key(townName));
+
+        String townKey = key(townName);
+
+        if (enabledTowns.contains(townKey)) {
+            return true;
+        }
+
+        if (!isAutoCreationEnabled()) {
+            return false;
+        }
+
+        Town town = TownyAPI.getInstance().getTown(townName);
+
+        if (town == null) {
+            return false;
+        }
+
+        String realTownName = safeTownName(town);
+        enabledTowns.add(key(realTownName));
+        DonVilleStorage.setEnabled(realTownName, true);
+        return true;
     }
 
     public static void createBox(Town town) {
@@ -52,6 +105,10 @@ public final class DonVilleManager {
     public static boolean removeBox(Town town) {
         ensureLoaded();
 
+        if (isAutoCreationEnabled()) {
+            return false;
+        }
+
         String townName = safeTownName(town);
         boolean removed = enabledTowns.remove(key(townName));
 
@@ -61,6 +118,10 @@ public final class DonVilleManager {
 
     public static List<Town> getEnabledTowns() {
         ensureLoaded();
+
+        if (isAutoCreationEnabled()) {
+            createMissingBoxesForAllTowns();
+        }
 
         List<Town> towns = new ArrayList<>();
 
@@ -168,7 +229,7 @@ public final class DonVilleManager {
 
     private static void ensureLoaded() {
         if (enabledTowns == null) {
-            reload();
+            enabledTowns = DonVilleStorage.loadEnabledTowns();
         }
     }
 
