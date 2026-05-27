@@ -1,5 +1,8 @@
 package fr.moodcraft.tgrade;
 
+import fr.moodcraft.donville.command.DonVilleCommand;
+import fr.moodcraft.donville.manager.DonVilleManager;
+
 import fr.moodcraft.flag.command.DrapeauCommand;
 import fr.moodcraft.flag.listener.FlagGUIListener;
 import fr.moodcraft.flag.storage.FlagStorage;
@@ -109,6 +112,12 @@ public class Main extends JavaPlugin {
         );
 
         // =========================
+        // 🎁 DonVille
+        // =========================
+        DonVilleManager.init();
+        registerCommand("donville", new DonVilleCommand());
+
+        // =========================
         // 🚩 MoodTownFlag / Drapeaux
         // =========================
         FlagStorage.load();
@@ -119,6 +128,7 @@ public class Main extends JavaPlugin {
         getLogger().info("----- MoodTownSuite -----");
         getLogger().info("Commission urbaine chargée.");
         getLogger().info("Menu ville chargé.");
+        getLogger().info("Boîtes à dons de ville chargées.");
         getLogger().info("Drapeaux ville/nation chargés.");
         getLogger().info("Towny détecté.");
         getLogger().info("Grades chargés: " + GradeManager.getAll().size());
@@ -133,6 +143,7 @@ public class Main extends JavaPlugin {
         GradeManager.getAll().forEach(GradeManager::save);
         GradeManager.clearCache();
         FlagStorage.save();
+        DonVilleManager.save();
 
         getLogger().info("");
         getLogger().info("----- MoodTownSuite -----");
