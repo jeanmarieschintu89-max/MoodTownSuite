@@ -139,9 +139,28 @@ public class UrbanismeMainListener implements Listener {
             return;
         }
 
-        Town town = resident.getTownOrNull();
+        Town playerTown = resident.getTownOrNull();
+        Town claimTown = TownyAPI.getInstance().getTown(p.getLocation());
 
-        ProjectDepositSessionManager.start(p, town.getName());
+        if (claimTown == null) {
+            MoodStyle.deny(
+                    p,
+                    "Projet impossible ici.",
+                    "Place-toi dans un claim de ta ville pour déposer le projet."
+            );
+            return;
+        }
+
+        if (!claimTown.equals(playerTown)) {
+            MoodStyle.deny(
+                    p,
+                    "Mauvaise ville.",
+                    "Le projet doit être déposé dans un claim de ta propre ville."
+            );
+            return;
+        }
+
+        ProjectDepositSessionManager.start(p, playerTown.getName());
         p.closeInventory();
         MoodStyle.ok(p);
     }
