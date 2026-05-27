@@ -1,5 +1,7 @@
 package fr.moodcraft.tgrade.listener;
 
+import fr.moodcraft.tgrade.Main;
+
 import fr.moodcraft.tgrade.manager.ProjectDepositSessionManager;
 import fr.moodcraft.tgrade.manager.ProjectDepositSessionManager.Session;
 import fr.moodcraft.tgrade.manager.ProjectDepositSessionManager.Step;
@@ -16,9 +18,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 
@@ -28,7 +32,7 @@ public class ProjectDepositChatListener
     private static final int MAX_NAME_LENGTH = 32;
     private static final int MAX_DESCRIPTION_LENGTH = 120;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(
             AsyncPlayerChatEvent e
     ) {
@@ -46,9 +50,18 @@ public class ProjectDepositChatListener
                 e.getMessage().trim();
 
         Bukkit.getScheduler().runTask(
-                Bukkit.getPluginManager()
-                        .getPlugin("MoodTownGrade"),
+                Main.get(),
                 () -> handle(p, message)
+        );
+    }
+
+    @EventHandler
+    public void onQuit(
+            PlayerQuitEvent e
+    ) {
+
+        ProjectDepositSessionManager.remove(
+                e.getPlayer()
         );
     }
 
