@@ -3,6 +3,7 @@
 
 boite-dons-ville:
   actif: true
+  creation-automatique: true
   montant-minimum: 10
   montant-maximum: 100000
   historique-max: 20
